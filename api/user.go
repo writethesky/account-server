@@ -1,4 +1,4 @@
-package v1
+package api
 
 import (
 	"net/http"
@@ -9,16 +9,13 @@ import (
 type User struct {
 }
 
-type CreateUserResponse struct {
-}
-
 // Create godoc
 // @Summary 新增用户
 // @Schemes
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param userInfo body CreateTokenRequest true "用户信息"
+// @Param userInfo body service.CreateUserInput true "用户信息"
 // @Success 201 "Created"
 // @Failure 422 {object} Message
 // @Router /users [post]
@@ -33,7 +30,7 @@ func (*User) Create(c *gin.Context) {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param _ body CreateTokenRequest true "用户信息"
+// @Param _ body service.CreateUserInput true "用户信息"
 // @Success 200 "Ok"
 // @Failure 422 {object} Message
 // @Router /users [patch]

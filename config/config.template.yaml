@@ -1,0 +1,8 @@
+server:
+  port: 8080
+mysql:
+  user: xxx
+  password: xxx
+  host: localhost
+  port: 3306
+  database: account
