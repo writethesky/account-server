@@ -17,8 +17,8 @@ type Message struct {
 }
 
 type CreateTokenRequest struct {
-	Username string `json:"username" example:"user"`   // 用户名
-	Password string `json:"password" example:"123456"` // 密码
+	Username string `json:"username" example:"user1234"`     // 用户名
+	Password string `json:"password" example:"Aa123456789@"` // 密码
 }
 
 type CreateTokenResponse struct {
