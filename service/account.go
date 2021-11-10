@@ -14,7 +14,7 @@ type CreateAccountInput struct {
 	Data  interface{}        `json:"data"`
 }
 
-func CreateAccount(input CreateAccountInput) (accountModel model.Account, err error) {
+func CreateAccount(userID int64, input CreateAccountInput) (accountModel model.Account, err error) {
 	dataBytes, err := json.Marshal(input.Data)
 	if nil != err {
 		return
@@ -32,12 +32,23 @@ func CreateAccount(input CreateAccountInput) (accountModel model.Account, err er
 	}
 
 	account := entity.Account{
-
-		Title: input.Title,
-		Type:  input.Type,
-		Data:  string(dataBytes),
+		UserID: uint64(userID),
+		Title:  input.Title,
+		Type:   input.Type,
+		Data:   string(dataBytes),
 	}
 	return dao.CreateAccount(account)
+}
+
+func GetAccountInfo(userID uint64, accountID uint) (account model.Account, err error) {
+	account, err = dao.GetAccount(accountID)
+	if nil != err {
+		return
+	}
+	if account.UserID != userID {
+		return model.Account{}, errors.New("no permission")
+	}
+	return
 }
 
 func checkAccountNormal(dataBytes []byte) (err error) {

@@ -1,9 +1,10 @@
 package api
 
 import (
-	"account-server/repository/entity"
+	tokenV1 "account-server/pb/basic/token/v1"
 	"account-server/service"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -53,16 +54,6 @@ type Account struct {
 //
 // }
 
-type CreateAccountResponse struct {
-	ID        uint               `gorm:"primarykey" json:"id"`
-	CreatedAt string             `json:"created_at"`
-	UpdatedAt string             `json:"updated_at"`
-	DeletedAt string             `gorm:"index" json:"deleted_at"`
-	Title     string             `gorm:"type:varchar(30)" json:"title"`
-	Type      entity.AccountType `gorm:"type:tinyint" json:"type"`
-	Data      interface{}        `gorm:"type:json" json:"data"`
-}
-
 // Create godoc
 // @Security ApiKeyAuth
 // @Summary 新增账号
@@ -70,7 +61,7 @@ type CreateAccountResponse struct {
 // @Accept json
 // @Produce json
 // @Param _ body service.CreateAccountInput{data=entity.AccountNormal} true "账号信息"
-// @Success 201 {object} CreateAccountResponse{data=entity.AccountNormal}
+// @Success 201 {object} model.Account{data=entity.AccountNormal}
 // @Failure 422 {object} Message
 // @Router /accounts/ [post]
 func (*Account) Create(c *gin.Context) {
@@ -79,26 +70,40 @@ func (*Account) Create(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, err.Error())
 		return
 	}
-	account, err := service.CreateAccount(*params)
+	auth, _ := c.Get("auth")
+	account, err := service.CreateAccount(auth.(*tokenV1.ParseResponse).UserId, *params)
 	if nil != err {
 		c.JSON(http.StatusUnprocessableEntity, err.Error())
 	}
 	c.JSON(http.StatusCreated, account)
 }
 
-// // Info godoc
-// // @Security ApiKeyAuth
-// // @Summary 获取账号详情
-// // @Tags accounts
-// // @Accept json
-// // @Produce json
-// // @Param id path string true "账号id"
-// // @Success 200 {object} entity.Account{data=AccountNormal}
-// // @Failure 404 {object} Message
-// // @Router /accounts/{id} [get]
-// func (*Account) Info(c *gin.Context) {
-//
-// }
+// Info godoc
+// @Security ApiKeyAuth
+// @Summary 获取账号详情
+// @Tags accounts
+// @Accept json
+// @Produce json
+// @Param id path string true "账号id"
+// @Success 200 {object} model.Account{data=entity.AccountNormal}
+// @Failure 404 {object} Message
+// @Router /accounts/{id} [get]
+func (*Account) Info(c *gin.Context) {
+	idString := c.Param("id")
+	id, err := strconv.Atoi(idString)
+	if nil != err {
+		c.JSON(http.StatusUnprocessableEntity, err.Error())
+		return
+	}
+	auth, _ := c.Get("auth")
+	account, err := service.GetAccountInfo(uint64(auth.(*tokenV1.ParseResponse).UserId), uint(id))
+	if nil != err {
+		c.JSON(http.StatusForbidden, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, account)
+}
+
 //
 // // Delete godoc
 // // @Security ApiKeyAuth

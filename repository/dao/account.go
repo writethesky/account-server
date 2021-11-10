@@ -27,12 +27,13 @@ func GetAccount(id uint) (account model.Account, err error) {
 	account = model.Account{
 		Model: model.Model{
 			ID:        accountEntity.Model.ID,
-			CreatedAt: accountEntity.Model.CreatedAt,
-			UpdatedAt: accountEntity.Model.UpdatedAt,
-			DeletedAt: accountEntity.Model.DeletedAt,
+			CreatedAt: accountEntity.Model.CreatedAt.UnixMilli(),
+			UpdatedAt: accountEntity.Model.UpdatedAt.UnixMilli(),
+			DeletedAt: accountEntity.Model.DeletedAt.Time.UnixMilli(),
 		},
-		Title: accountEntity.Title,
-		Type:  accountEntity.Type,
+		UserID: accountEntity.UserID,
+		Title:  accountEntity.Title,
+		Type:   accountEntity.Type,
 	}
 	switch accountEntity.Type {
 	case entity.AccountTypeNormal:

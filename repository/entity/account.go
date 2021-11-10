@@ -30,7 +30,8 @@ type AccountSSH struct {
 
 type Account struct {
 	gorm.Model
-	Title string      `gorm:"type:varchar(30)" json:"title"`
-	Type  AccountType `gorm:"type:tinyint" json:"type"`
-	Data  string      `gorm:"type:json" json:"data"`
+	UserID uint64      `json:"user_id"`
+	Title  string      `gorm:"type:varchar(30)" json:"title"`
+	Type   AccountType `gorm:"type:tinyint" json:"type"`
+	Data   string      `gorm:"type:json" json:"data"`
 }
