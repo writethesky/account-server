@@ -1,7 +1,7 @@
 package main
 
 import (
-	_ "account-server/docs"
+	_ "account-server/doc"
 	"account-server/internal"
 	"account-server/repository/entity"
 	"account-server/router"

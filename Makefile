@@ -35,6 +35,6 @@ generate: fetch-proto
 	buf generate ${PROTO_DIRECTORY}
 
 run:
-	swag init --output ./docs/
+	swag init --output ./doc/
 	go run main.go
 
