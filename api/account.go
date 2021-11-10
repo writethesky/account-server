@@ -22,37 +22,43 @@ type Account struct {
 // 	Password     string `json:"password"`
 // 	LoginAddress string `json:"login_address"`
 // }
-//
-// // List godoc
-// // @Security ApiKeyAuth
-// // @Summary 获取账号列表
-// // @Description data有多种形式, 具体形式与type有关
-// // @Description AccountTypeNormal
-// // @Description <pre><code> {
-// // @Description &nbsp;&nbsp;"account": "",
-// // @Description &nbsp;&nbsp;"password": ""
-// // @Description }</code></pre>
-// // @Description AccountTypeEmail
-// // @Description <pre><code> {
-// // @Description &nbsp;&nbsp;"account": "",
-// // @Description &nbsp;&nbsp;"password": "",
-// // @Description &nbsp;&nbsp;"login_address": ""
-// // @Description }</code></pre>
-// // @Description AccountTypeSSH
-// // @Description <pre><code> {
-// // @Description &nbsp;&nbsp;"user": "",
-// // @Description &nbsp;&nbsp;"password": "",
-// // @Description &nbsp;&nbsp;"address": "",
-// // @Description &nbsp;&nbsp;"port": 22
-// // @Description }</code></pre>
-// // @Tags accounts
-// // @Accept json
-// // @Produce json
-// // @Success 200 {array} entity.Account{data=entity.AccountNormal}
-// // @Router /accounts [get]
-// func (*Account) List(c *gin.Context) {
-//
-// }
+
+// List godoc
+// @Security ApiKeyAuth
+// @Summary 获取账号列表
+// @Description data有多种形式, 具体形式与type有关
+// @Description AccountTypeNormal
+// @Description <pre><code> {
+// @Description &nbsp;&nbsp;"account": "",
+// @Description &nbsp;&nbsp;"password": ""
+// @Description }</code></pre>
+// @Description AccountTypeEmail
+// @Description <pre><code> {
+// @Description &nbsp;&nbsp;"account": "",
+// @Description &nbsp;&nbsp;"password": "",
+// @Description &nbsp;&nbsp;"login_address": ""
+// @Description }</code></pre>
+// @Description AccountTypeSSH
+// @Description <pre><code> {
+// @Description &nbsp;&nbsp;"user": "",
+// @Description &nbsp;&nbsp;"password": "",
+// @Description &nbsp;&nbsp;"address": "",
+// @Description &nbsp;&nbsp;"port": 22
+// @Description }</code></pre>
+// @Tags accounts
+// @Accept json
+// @Produce json
+// @Success 200 {array} model.Account{data=entity.AccountNormal}
+// @Router /accounts [get]
+func (*Account) List(c *gin.Context) {
+	auth, _ := c.Get("auth")
+	list, err := service.GetAccountList(auth.(*tokenV1.ParseResponse).UserId)
+	if nil != err {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, list)
+}
 
 // Create godoc
 // @Security ApiKeyAuth

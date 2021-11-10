@@ -31,6 +31,7 @@ func Init() *gin.Engine {
 	accountAPI := new(api.Account)
 	accounts := r.Group("accounts")
 	accounts.POST("", auth, accountAPI.Create)
+	accounts.GET("", auth, accountAPI.List)
 	accounts.GET("/:id", auth, accountAPI.Info)
 
 	return r
