@@ -2,8 +2,10 @@ package api
 
 import (
 	"account-server/internal"
+	tokenV1 "account-server/pb/basic/token/v1"
 	userV1 "account-server/pb/basic/user/v1"
 	"net/http"
+	"strconv"
 
 	"google.golang.org/grpc/codes"
 
@@ -16,17 +18,17 @@ type User struct {
 }
 
 type CreateUserRequest struct {
-	Username string `json:"username" example:"admin"`  // 用户名
-	Password string `json:"password" example:"123456"` // 密码
+	Username string `json:"username" example:"admin"`
+	Password string `json:"password" example:"123456"`
 }
 
 // Create godoc
-// @Summary 新增用户
+// @Summary add new users
 // @Schemes
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param userInfo body CreateUserRequest true "用户信息"
+// @Param userInfo body CreateUserRequest true "user info"
 // @Success 201 "Created"
 // @Failure 422 {object} Message
 // @Router /users [post]
@@ -54,14 +56,53 @@ func (*User) Create(c *gin.Context) {
 
 // Patch godoc
 // @Security ApiKeyAuth
-// @Summary 修改用户信息
+// @Summary Modifying User Information
 // @Schemes
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param _ body service.CreateUserInput true "用户信息"
+// @Param _ body CreateUserRequest true "user info"
+// @Param id path int true "user id. 0: current user"
 // @Success 200 "Ok"
 // @Failure 422 {object} Message
-// @Router /users [patch]
+// @Router /users/{id} [patch]
 func (*User) Patch(c *gin.Context) {
+	// get router param: id
+	idString := c.Param("id")
+	id, err := strconv.ParseInt(idString, 10, 64)
+	if nil != err {
+		c.JSON(http.StatusUnprocessableEntity, Message{err.Error()})
+		return
+	}
+
+	var input CreateUserRequest
+	if err := c.Bind(&input); nil != err {
+		c.JSON(http.StatusUnprocessableEntity, Message{err.Error()})
+		return
+	}
+
+	// todo Administrators can modify other user info
+	auth, _ := c.Get("auth")
+	if 0 != id && auth.(*tokenV1.ParseResponse).UserId != id {
+		c.JSON(http.StatusForbidden, "Insufficient permissions")
+		return
+	}
+
+	if 0 == id {
+		id = auth.(*tokenV1.ParseResponse).UserId
+	}
+
+	if input.Password != "" {
+		// modify password
+		_, err = internal.NewUserServiceClient().SetPassword(c, &userV1.SetPasswordRequest{
+			UserId:   id,
+			Password: input.Password,
+		})
+
+		if nil != err {
+			c.JSON(http.StatusUnprocessableEntity, status.Convert(err).Message())
+			return
+		}
+	}
+	c.Status(http.StatusOK)
 }
