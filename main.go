@@ -71,7 +71,7 @@ import (
 // @Tag.description 账号相关，注意，具体data的结构与type有关，详细介绍见【GET /accounts】
 
 func main() {
-	// migrate()
+	migrate()
 
 	r := router.Init()
 
@@ -79,7 +79,7 @@ func main() {
 }
 
 func migrate() {
-	err := internal.DB.AutoMigrate(new(entity.User))
+	err := internal.DB.AutoMigrate(new(entity.Account))
 	if nil != err {
 		panic(err)
 	}

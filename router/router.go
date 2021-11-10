@@ -28,6 +28,10 @@ func Init() *gin.Engine {
 	users.POST("", auth, userAPI.Create)
 	users.PATCH("/:id", auth, userAPI.Patch)
 
+	accountAPI := new(api.Account)
+	accounts := r.Group("accounts")
+	accounts.POST("", auth, accountAPI.Create)
+
 	return r
 }
 
