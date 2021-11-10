@@ -12,17 +12,6 @@ import (
 type Account struct {
 }
 
-//
-// type AccountNormal struct {
-// 	Account  string `json:"account" example:"333333333"`
-// 	Password string `json:"password" example:"12345678"`
-// }
-// type AccountEmail struct {
-// 	Account      string `json:"account"`
-// 	Password     string `json:"password"`
-// 	LoginAddress string `json:"login_address"`
-// }
-
 // List godoc
 // @Security ApiKeyAuth
 // @Summary 获取账号列表
@@ -110,20 +99,34 @@ func (*Account) Info(c *gin.Context) {
 	c.JSON(http.StatusOK, account)
 }
 
-//
-// // Delete godoc
-// // @Security ApiKeyAuth
-// // @Summary 删除账号
-// // @Tags accounts
-// // @Accept json
-// // @Produce json
-// // @Param id path string true "账号id"
-// // @Success 204 {object} Message
-// // @Failure 403 {object} Message
-// // @Router /accounts/{id} [delete]
-// func (*Account) Delete(c *gin.Context) {
-//
-// }
+// Delete godoc
+// @Security ApiKeyAuth
+// @Summary 删除账号
+// @Tags accounts
+// @Accept json
+// @Produce json
+// @Param id path string true "账号id"
+// @Success 204 "No Content"
+// @Failure 403 {object} Message
+// @Router /accounts/{id} [delete]
+func (*Account) Delete(c *gin.Context) {
+	idString := c.Param("id")
+	id, err := strconv.Atoi(idString)
+	if nil != err {
+		c.JSON(http.StatusUnprocessableEntity, err.Error())
+		return
+	}
+
+	auth, _ := c.Get("auth")
+
+	err = service.DeleteAccount(auth.(*tokenV1.ParseResponse).UserId, int64(id))
+	if nil != err {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.Status(http.StatusNoContent)
+}
+
 //
 // // Put godoc
 // // @Security ApiKeyAuth

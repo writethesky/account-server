@@ -32,6 +32,7 @@ func Init() *gin.Engine {
 	accounts := r.Group("accounts")
 	accounts.POST("", auth, accountAPI.Create)
 	accounts.GET("", auth, accountAPI.List)
+	accounts.DELETE("/:id", auth, accountAPI.Delete)
 	accounts.GET("/:id", auth, accountAPI.Info)
 
 	return r

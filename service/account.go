@@ -64,6 +64,10 @@ func GetAccountList(userID int64) (list []model.Account, err error) {
 	return
 }
 
+func DeleteAccount(userID, accountID int64) (err error) {
+	return dao.DeleteAccount(userID, accountID)
+}
+
 func checkAccountNormal(dataBytes []byte) (err error) {
 	accountNormal := new(entity.AccountNormal)
 	err = json.Unmarshal(dataBytes, accountNormal)
