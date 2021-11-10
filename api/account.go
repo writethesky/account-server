@@ -127,18 +127,37 @@ func (*Account) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-//
-// // Put godoc
-// // @Security ApiKeyAuth
-// // @Summary 修改账号
-// // @Tags accounts
-// // @Accept json
-// // @Produce json
-// // @Param id path string true "账号id"
-// // @Param _ body CreateAccountRequest{data=AccountNormal} true "账号信息"
-// // @Success 200 {object} entity.Account{data=AccountNormal}
-// // @Failure 422 {object} Message
-// // @Router /accounts/{id} [put]
-// func (*Account) Put(c *gin.Context) {
-//
-// }
+// Put godoc
+// @Security ApiKeyAuth
+// @Summary 修改账号
+// @Tags accounts
+// @Accept json
+// @Produce json
+// @Param id path string true "账号id"
+// @Param _ body service.CreateAccountInput{data=entity.AccountNormal} true "账号信息"
+// @Success 200 {object} model.Account{data=entity.AccountNormal}
+// @Failure 422 {object} Message
+// @Router /accounts/{id} [put]
+func (*Account) Put(c *gin.Context) {
+	idString := c.Param("id")
+	id, err := strconv.Atoi(idString)
+	if nil != err {
+		c.JSON(http.StatusUnprocessableEntity, err.Error())
+		return
+	}
+
+	params := new(service.CreateAccountInput)
+	if err := c.Bind(params); nil != err {
+		c.JSON(http.StatusUnprocessableEntity, err.Error())
+		return
+	}
+
+	auth, _ := c.Get("auth")
+
+	account, err := service.ModifyAccount(auth.(*tokenV1.ParseResponse).UserId, int64(id), *params)
+	if nil != err {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, account)
+}

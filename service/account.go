@@ -68,6 +68,26 @@ func DeleteAccount(userID, accountID int64) (err error) {
 	return dao.DeleteAccount(userID, accountID)
 }
 
+func ModifyAccount(userID int64, accountID int64, input CreateAccountInput) (account model.Account, err error) {
+	dataBytes, err := json.Marshal(input.Data)
+	if nil != err {
+		return
+	}
+	err = dao.UpdateAccount(userID, accountID, entity.Account{
+		Title: input.Title,
+		Type:  input.Type,
+		Data:  string(dataBytes),
+	})
+	if nil != err {
+		return
+	}
+	accountEntity, err := dao.GetAccount(uint(accountID))
+	if nil != err {
+		return
+	}
+	return model.ToAccount(accountEntity)
+}
+
 func checkAccountNormal(dataBytes []byte) (err error) {
 	accountNormal := new(entity.AccountNormal)
 	err = json.Unmarshal(dataBytes, accountNormal)

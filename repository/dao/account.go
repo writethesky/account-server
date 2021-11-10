@@ -29,3 +29,7 @@ func DeleteAccount(userID, accountID int64) (err error) {
 		},
 	}).Error
 }
+
+func UpdateAccount(userID int64, id int64, account entity.Account) (err error) {
+	return internal.DB.Select("Title", "Type", "Data").Where("user_id=? and id=?", userID, id).Updates(account).Error
+}
