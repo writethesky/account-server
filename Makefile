@@ -14,10 +14,10 @@ install-tools:
     	"https://github.com/bufbuild/buf/releases/download/v${BUF_VERSION}/buf-$(shell uname -s)-$(shell uname -m)" \
     	-o "$(shell go env GOPATH)/bin/buf" && \
     	chmod +x "$(shell go env GOPATH)/bin/buf"
-	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.6.0
-	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.6.0
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.27.1
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1.0
+	go get -u github.com/swaggo/swag/cmd/swag
+
 
 clean:
 	rm -rf ${PROTO_DIRECTORY} ${PROTO_TARGET_DIRECTORY}
@@ -33,8 +33,8 @@ else ifeq ($(BASIC_FETCH_SOURCE_TYPE),$(shell echo $(FETCH_SOURCE_TYPE_LOCAL)))
 endif
 generate: fetch-proto
 	buf generate ${PROTO_DIRECTORY}
+	swag init --output ./doc/
 
 run:
-	swag init --output ./doc/
 	go run main.go
 
