@@ -18,6 +18,7 @@ import (
 func Init() *gin.Engine {
 	r := gin.Default()
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.Use(cors)
 
 	tokenAPI := new(api.Token)
 	tokens := r.Group("tokens")
@@ -63,4 +64,16 @@ func auth(c *gin.Context) {
 	}
 	c.Set("auth", res)
 
+}
+
+func cors(c *gin.Context) {
+	c.Writer.Header().Set("Access-Control-Allow-Origin", c.Request.Host)
+	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+	c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
+
+	if c.Request.Method == "OPTIONS" {
+		c.AbortWithStatus(http.StatusNoContent)
+		return
+	}
 }
