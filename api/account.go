@@ -69,6 +69,7 @@ func (*Account) Create(c *gin.Context) {
 	account, err := service.CreateAccount(auth.(*tokenV1.ParseResponse).UserId, *params)
 	if nil != err {
 		c.JSON(http.StatusUnprocessableEntity, err.Error())
+		return
 	}
 	c.JSON(http.StatusCreated, account)
 }
