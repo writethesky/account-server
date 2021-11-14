@@ -26,7 +26,7 @@ func Init() *gin.Engine {
 
 	userAPI := new(api.User)
 	users := r.Group("users")
-	users.POST("", auth, userAPI.Create)
+	users.POST("", userAPI.Create)
 	users.PATCH("/:id", auth, userAPI.Patch)
 
 	accountAPI := new(api.Account)
