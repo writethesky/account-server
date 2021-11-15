@@ -17,6 +17,7 @@ func GetAccount(id uint) (account entity.Account, err error) {
 }
 
 func GetAccountList(userID int64) (list []entity.Account, err error) {
+	list = make([]entity.Account, 0)
 	err = internal.DB.Where("user_id=?", userID).Order("updated_at desc").Find(&list).Error
 	return
 }
