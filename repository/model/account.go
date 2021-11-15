@@ -54,7 +54,7 @@ func ToAccount(account entity.Account) (accountModel Account, err error) {
 }
 
 func ToAccountList(accountList []entity.Account) (list []Account, err error) {
-	list = make([]Account, 0, len(accountList)
+	list = make([]Account, 0, len(accountList))
 	for _, account := range accountList {
 		accountModel, err := ToAccount(account)
 		if nil != err {
