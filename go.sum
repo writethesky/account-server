@@ -171,6 +171,10 @@ github.com/ugorji/go/codec v1.2.6 h1:7kbGefxLoDBuYXOms4yD7223OpNMMPNPZxXk5TvFcyQ
 github.com/ugorji/go/codec v1.2.6/go.mod h1:V6TCNZ4PHqoHGFZuSG1W8nrCzzdgA2DozYxWFFpvxTw=
 github.com/urfave/cli v1.20.0/go.mod h1:70zkFmudgCuE/ngEzBv17Jvp/497gISqfk5gWijbERA=
 github.com/urfave/cli/v2 v2.3.0/go.mod h1:LJmUH05zAU44vOAcrfzZQKsZbVcdbOG8rtL3/XcUArI=
+github.com/writethesky/utility v1.0.0 h1:nZ0XzGOw+bgvw7wdhJOP30drN24XkIZOEjiRuYkW1QE=
+github.com/writethesky/utility v1.0.0/go.mod h1:ry8Nlgv6FJkBD2TtbH3FYg/9/3eMOZuhNYGO2jJc9SI=
+github.com/writethesky/utility v1.0.1 h1:QJo5HQVq/YJRf7K3XWP+FUN5/Gt+fMnwP+2Brpc9xdA=
+github.com/writethesky/utility v1.0.1/go.mod h1:ry8Nlgv6FJkBD2TtbH3FYg/9/3eMOZuhNYGO2jJc9SI=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
 go.opentelemetry.io/proto/otlp v0.7.0/go.mod h1:PqfVotwruBrMGOCsRd/89rSnXhoiJIqeYNgFYFoEGnI=

@@ -1,11 +1,7 @@
 package internal
 
 import (
-	"flag"
-	"io/ioutil"
-	"os"
-
-	"gopkg.in/yaml.v3"
+	"github.com/writethesky/utility/config"
 )
 
 type configEntity struct {
@@ -31,27 +27,7 @@ type serverEntity struct {
 var Config *configEntity
 
 func init() {
-	var configFileName string
-	flag.StringVar(&configFileName, "config", "", "配置文件位置")
-	flag.Parse()
 
-	if "" == configFileName {
-		flag.Usage()
-		panic(nil)
-	}
-
-	file, err := os.Open(configFileName)
-	if nil != err {
-		panic(err)
-	}
-	fileBytes, err := ioutil.ReadAll(file)
-	if nil != err {
-		panic(err)
-	}
 	Config = new(configEntity)
-	err = yaml.Unmarshal(fileBytes, Config)
-	if nil != err {
-		panic(err)
-	}
-
+	config.Parse(Config, "../")
 }
