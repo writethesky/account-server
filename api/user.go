@@ -84,7 +84,7 @@ func (*User) Patch(c *gin.Context) {
 	// todo Administrators can modify other user info
 	auth, _ := c.Get("auth")
 	if 0 != id && auth.(*tokenV1.ParseResponse).UserId != id {
-		c.JSON(http.StatusForbidden, "Insufficient permissions")
+		c.JSON(http.StatusForbidden, Message{"Insufficient permissions"})
 		return
 	}
 
@@ -100,7 +100,7 @@ func (*User) Patch(c *gin.Context) {
 		})
 
 		if nil != err {
-			c.JSON(http.StatusUnprocessableEntity, status.Convert(err).Message())
+			c.JSON(http.StatusUnprocessableEntity, Message{status.Convert(err).Message()})
 			return
 		}
 	}
