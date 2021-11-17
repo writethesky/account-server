@@ -1,5 +1,9 @@
 server:
   port: 8080
+  private_key: |-
+    -----BEGIN PRIVATE KEY-----
+    xxxxxx
+    -----END PRIVATE KEY-----
 token_server:
   host: localhost
   port: 8080
@@ -12,3 +16,9 @@ mysql:
   host: localhost
   port: 3306
   database: account
+redis:
+  user: xxx
+  password: xxx
+  host: xxx
+  port: 3306
+  database: 0
