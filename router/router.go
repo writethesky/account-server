@@ -18,7 +18,9 @@ import (
 func Init() *gin.Engine {
 	r := gin.Default()
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	r.Use(cors)
+
+	r.POST("secures", cors, api.SetSecureKey)
+	r.Use(cors, api.Secure)
 
 	tokenAPI := new(api.Token)
 	tokens := r.Group("tokens")
@@ -38,6 +40,20 @@ func Init() *gin.Engine {
 	accounts.PUT("/:id", auth, accountAPI.Put)
 
 	return r
+}
+
+func cors(c *gin.Context) {
+
+	c.Writer.Header().Set("Access-Control-Allow-Origin", c.Request.Header.Get("Origin"))
+	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+	c.Writer.Header().Set("Access-Control-Max-Age", "86400")
+	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Security, accept, origin, Cache-Control, X-Requested-With")
+	c.Writer.Header().Set("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT, PATCH, DELETE")
+
+	if c.Request.Method == "OPTIONS" {
+		c.AbortWithStatus(http.StatusNoContent)
+		return
+	}
 }
 
 func auth(c *gin.Context) {
@@ -64,18 +80,4 @@ func auth(c *gin.Context) {
 	}
 	c.Set("auth", res)
 
-}
-
-func cors(c *gin.Context) {
-
-	c.Writer.Header().Set("Access-Control-Allow-Origin", c.Request.Header.Get("Origin"))
-	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-	c.Writer.Header().Set("Access-Control-Max-Age", "86400")
-	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
-	c.Writer.Header().Set("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT, PATCH, DELETE")
-
-	if c.Request.Method == "OPTIONS" {
-		c.AbortWithStatus(http.StatusNoContent)
-		return
-	}
 }

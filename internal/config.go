@@ -9,6 +9,7 @@ type configEntity struct {
 	UserServer  serverEntity `yaml:"user_server"`
 	MySQL       mysqlEntity  `yaml:"mysql"`
 	Server      serverEntity `yaml:"server"`
+	Redis       redisEntity  `yaml:"redis"`
 }
 
 type mysqlEntity struct {
@@ -20,8 +21,17 @@ type mysqlEntity struct {
 }
 
 type serverEntity struct {
-	Host string `yaml:"host"`
-	Port int    `yaml:"port"`
+	Host       string `yaml:"host"`
+	Port       int    `yaml:"port"`
+	PrivateKey string `yaml:"private_key"`
+}
+
+type redisEntity struct {
+	User     string `yaml:"user"`
+	Password string `yaml:"password"`
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+	Database int    `yaml:"database"`
 }
 
 var Config *configEntity
