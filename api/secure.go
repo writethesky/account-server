@@ -9,6 +9,7 @@ import (
 	"crypto/rsa"
 	"crypto/sha256"
 	"crypto/x509"
+	"encoding/hex"
 	"encoding/pem"
 	"fmt"
 	"io"
@@ -69,6 +70,17 @@ func Secure(c *gin.Context) {
 	if sessionID == "" {
 		return
 	}
+	nonce := c.Request.Header.Get("Nonce")
+	iv, err := hex.DecodeString(nonce)
+	if nil != err {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if len(iv) != 12 {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, "nonce bytes length must be 12")
+		return
+	}
 
 	transferKey, err := internal.RDB.Get(c, getRedisSessionKey(sessionID)).Bytes()
 	if nil != err {
@@ -83,21 +95,15 @@ func Secure(c *gin.Context) {
 		return
 	}
 
-	if len(bodyBytes) < 32 {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, "format error")
-		return
+	if len(bodyBytes) != 0 {
+		body, err := aesGCMDecrypt(transferKey, iv, bodyBytes)
+		if nil != err {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		c.Request.Body = io.NopCloser(bytes.NewReader(body))
 	}
-
-	iv := bodyBytes[0:12]
-	cypherBody := bodyBytes[12:]
-
-	body, err := aesGCMDecrypt(transferKey, iv, cypherBody)
-	if nil != err {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	c.Request.Body = io.NopCloser(bytes.NewReader(body))
 
 	tmpWriter := &bodyWriter{
 		body:           bytes.NewBufferString(""),
@@ -107,14 +113,14 @@ func Secure(c *gin.Context) {
 
 	c.Next()
 
-	cypherBody, err = aesGCMEncrypt(transferKey, iv, tmpWriter.body.Bytes())
+	bodyBytes, err = aesGCMEncrypt(transferKey, iv, tmpWriter.body.Bytes())
 	if nil != err {
 		tmpWriter.ResponseWriter.WriteHeader(http.StatusInternalServerError)
 		_, _ = tmpWriter.ResponseWriter.WriteString(err.Error())
 		return
 	}
 
-	_, _ = tmpWriter.ResponseWriter.WriteString(string(cypherBody))
+	_, _ = tmpWriter.ResponseWriter.Write(bodyBytes)
 
 }
 
