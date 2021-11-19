@@ -37,7 +37,7 @@ type Account struct {
 // @Tags accounts
 // @Accept json
 // @Produce json
-// @Success 200 {array} model.Account{data=entity.AccountNormal}
+// @Success 200 {array} model.Account{data=model.AccountNormal}
 // @Router /accounts [get]
 func (*Account) List(c *gin.Context) {
 	auth, _ := c.Get("auth")
@@ -55,8 +55,8 @@ func (*Account) List(c *gin.Context) {
 // @Tags accounts
 // @Accept json
 // @Produce json
-// @Param _ body service.CreateAccountInput{data=entity.AccountNormal} true "账号信息"
-// @Success 201 {object} model.Account{data=entity.AccountNormal}
+// @Param _ body service.CreateAccountInput{data=model.AccountNormal} true "账号信息"
+// @Success 201 {object} model.Account{data=model.AccountNormal}
 // @Failure 422 {object} Message
 // @Router /accounts/ [post]
 func (*Account) Create(c *gin.Context) {
@@ -81,7 +81,7 @@ func (*Account) Create(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path string true "账号id"
-// @Success 200 {object} model.Account{data=entity.AccountNormal}
+// @Success 200 {object} model.Account{data=model.AccountNormal}
 // @Failure 404 {object} Message
 // @Router /accounts/{id} [get]
 func (*Account) Info(c *gin.Context) {
@@ -135,8 +135,8 @@ func (*Account) Delete(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path string true "账号id"
-// @Param _ body service.CreateAccountInput{data=entity.AccountNormal} true "账号信息"
-// @Success 200 {object} model.Account{data=entity.AccountNormal}
+// @Param _ body service.CreateAccountInput{data=model.AccountNormal} true "账号信息"
+// @Success 200 {object} model.Account{data=model.AccountNormal}
 // @Failure 422 {object} Message
 // @Router /accounts/{id} [put]
 func (*Account) Put(c *gin.Context) {

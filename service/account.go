@@ -9,15 +9,20 @@ import (
 )
 
 type CreateAccountInput struct {
-	Title string             `json:"title"`
-	Type  entity.AccountType `json:"type"`
-	Data  interface{}        `json:"data"`
+	Title       string             `json:"title"`
+	Description string             `json:"description"`
+	Type        entity.AccountType `json:"type"`
+	Data        interface{}        `json:"data"`
 }
 
 func CreateAccount(userID int64, input CreateAccountInput) (accountModel model.Account, err error) {
 	dataBytes, err := json.Marshal(input.Data)
 	if nil != err {
 		return
+	}
+
+	if "" == input.Title {
+		return accountModel, errors.New("the title cannot be empty")
 	}
 	switch input.Type {
 	case entity.AccountTypeNormal:
@@ -32,10 +37,11 @@ func CreateAccount(userID int64, input CreateAccountInput) (accountModel model.A
 	}
 
 	account := &entity.Account{
-		UserID: uint64(userID),
-		Title:  input.Title,
-		Type:   input.Type,
-		Data:   string(dataBytes),
+		UserID:      uint64(userID),
+		Title:       input.Title,
+		Description: input.Description,
+		Type:        input.Type,
+		Data:        string(dataBytes),
 	}
 	err = dao.CreateAccount(account)
 	if nil != err {
@@ -74,9 +80,10 @@ func ModifyAccount(userID int64, accountID int64, input CreateAccountInput) (acc
 		return
 	}
 	err = dao.UpdateAccount(userID, accountID, entity.Account{
-		Title: input.Title,
-		Type:  input.Type,
-		Data:  string(dataBytes),
+		Title:       input.Title,
+		Type:        input.Type,
+		Description: input.Description,
+		Data:        string(dataBytes),
 	})
 	if nil != err {
 		return
@@ -89,7 +96,7 @@ func ModifyAccount(userID int64, accountID int64, input CreateAccountInput) (acc
 }
 
 func checkAccountNormal(dataBytes []byte) (err error) {
-	accountNormal := new(entity.AccountNormal)
+	accountNormal := new(model.AccountNormal)
 	err = json.Unmarshal(dataBytes, accountNormal)
 	if nil != err {
 		return
@@ -102,7 +109,7 @@ func checkAccountNormal(dataBytes []byte) (err error) {
 }
 
 func checkAccountEmail(dataBytes []byte) (err error) {
-	accountEmail := new(entity.AccountEmail)
+	accountEmail := new(model.AccountEmail)
 	err = json.Unmarshal(dataBytes, accountEmail)
 	if nil != err {
 		return
@@ -115,14 +122,14 @@ func checkAccountEmail(dataBytes []byte) (err error) {
 }
 
 func checkAccountSSH(dataBytes []byte) (err error) {
-	accountSSH := new(entity.AccountSSH)
+	accountSSH := new(model.AccountSSH)
 	err = json.Unmarshal(dataBytes, accountSSH)
 	if nil != err {
 		return
 	}
 
-	if "" == accountSSH.User || "" == accountSSH.Password || "" == accountSSH.Address || 0 == accountSSH.Port {
-		return errors.New("the user or password or address or port cannot be empty")
+	if "" == accountSSH.User || "" == accountSSH.Address {
+		return errors.New("the user or address cannot be empty")
 	}
 	return
 }
